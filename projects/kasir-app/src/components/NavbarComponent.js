@@ -1,18 +1,13 @@
 import React from "react";
-import {
-    Button,
-    Container,
-    Form,
-    Nav,
-    Navbar,
-    NavDropdown
-} from "react-bootstrap";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 
 const NavbarComponent = () => {
     return (
-        <Navbar expand="lg" className="bg-body-tertiary" variant="light">
-            <Container fluid>
-                <Navbar.Brand href="#">Navbar scroll</Navbar.Brand>
+        <Navbar expand="lg" variant="dark">
+            <Container>
+                <Navbar.Brand href="#">
+                    <strong>Kasir</strong> App
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
                     <Nav
@@ -38,15 +33,6 @@ const NavbarComponent = () => {
                             Link
                         </Nav.Link>
                     </Nav>
-                    <Form className="d-flex">
-                        <Form.Control
-                            type="search"
-                            placeholder="Search"
-                            className="me-2"
-                            aria-label="Search"
-                        />
-                        <Button variant="outline-success">Search</Button>
-                    </Form>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
