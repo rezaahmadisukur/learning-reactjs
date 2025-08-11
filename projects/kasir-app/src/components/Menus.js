@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Card, Button } from "react-bootstrap";
+import { Col, Card } from "react-bootstrap";
 import { numberWithCommas } from "../utils/utils.js";
 
 const Menus = ({ menu }) => {
@@ -20,7 +20,6 @@ const Menus = ({ menu }) => {
                         {menu.nama} <strong>({menu.kode})</strong>
                     </Card.Title>
                     <Card.Text>Rp. {numberWithCommas(menu.harga)}</Card.Text>
-                    <Button variant="primary">Go somewhere</Button>
                 </Card.Body>
             </Card>
         </Col>
