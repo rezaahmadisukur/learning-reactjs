@@ -26,7 +26,6 @@ const ListCategories = ({ changeCategory, selectCategory }) => {
         axios
             .get(`${API_URL}/categories`)
             .then((response) => {
-                console.log(response.data);
                 setCategories(response.data);
             })
             .catch((error) => {
