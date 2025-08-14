@@ -107,11 +107,11 @@ const Home = () => {
                         selectCategory={selectCategory}
                     />
                     <Col>
-                        <h4>
+                        <h4 className="my-3 mx-2">
                             <strong>Daftar Produk</strong>
                         </h4>
                         <hr />
-                        <Row>
+                        <Row className="overflow-auto menu">
                             {menus &&
                                 menus.map((menu) => (
                                     <Menus

@@ -27,26 +27,50 @@ const TotalBayar = ({ shoppingCarts }) => {
     }, 0);
 
     return (
-        <div className="fixed-bottom">
-            <Row>
-                <Col md={{ span: 3, offset: 9 }} className="px-4">
-                    <h4>
-                        Total Harga:{" "}
-                        <strong className="float-end me-2">
-                            Rp {numberWithCommas(totalBayar)}
-                        </strong>
-                    </h4>
-                    <Button
-                        className="btn-primary w-100 mx-2 my-2 d-flex gap-2"
-                        size="lg"
-                        onClick={() => submitTotalBayar(totalBayar)}
-                    >
-                        <FontAwesomeIcon icon={faShoppingCart} />
-                        <strong>BAYAR</strong>
-                    </Button>
-                </Col>
-            </Row>
-        </div>
+        <>
+            {/* Web */}
+            <div className="fixed-bottom d-none d-md-block">
+                <Row>
+                    <Col md={{ span: 3, offset: 9 }} className="bg-white p-3">
+                        <h4>
+                            Total Harga:{" "}
+                            <strong className="float-end me-2">
+                                Rp {numberWithCommas(totalBayar)}
+                            </strong>
+                        </h4>
+                        <Button
+                            className="btn-primary w-100 mx-2 my-2 d-flex gap-2"
+                            size="lg"
+                            onClick={() => submitTotalBayar(totalBayar)}
+                        >
+                            <FontAwesomeIcon icon={faShoppingCart} />
+                            <strong>BAYAR</strong>
+                        </Button>
+                    </Col>
+                </Row>
+            </div>
+            {/* Mobile */}
+            <div className="d-sm-block d-md-none">
+                <Row>
+                    <Col md={{ span: 3, offset: 9 }} className="bg-white p-3">
+                        <h4>
+                            Total Harga:{" "}
+                            <strong className="float-end me-2">
+                                Rp {numberWithCommas(totalBayar)}
+                            </strong>
+                        </h4>
+                        <Button
+                            className="btn-primary w-100 mx-2 my-2 d-flex gap-2"
+                            size="lg"
+                            onClick={() => submitTotalBayar(totalBayar)}
+                        >
+                            <FontAwesomeIcon icon={faShoppingCart} />
+                            <strong>BAYAR</strong>
+                        </Button>
+                    </Col>
+                </Row>
+            </div>
+        </>
     );
 };
 
