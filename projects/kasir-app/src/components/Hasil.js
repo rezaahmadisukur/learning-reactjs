@@ -1,9 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import { Badge, Col, ListGroup, Row } from "react-bootstrap";
 import { numberWithCommas } from "../utils/utils";
 import TotalBayar from "./TotalBayar";
+import { ModalKeranjang } from "../components";
 
 const Hasil = ({ shoppingCarts }) => {
+    const [detailCart, setDetailCart] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [jumlah, setJumlah] = useState(0);
+    const [keterangan, setKeterangan] = useState("");
+
+    const handleShow = (cart) => {
+        setShowModal(true);
+        setDetailCart(cart);
+        setJumlah(cart.jumlah);
+        setKeterangan(cart.keterangan);
+    };
+    const handleClose = () => setShowModal(false);
+
+    const tambah = () => {
+        setJumlah(jumlah + 1);
+    };
+
+    const kurang = () => {
+        if (jumlah !== 1) {
+            setJumlah(jumlah - 1);
+        }
+    };
+
+    const changeHandler = (event) => {
+        setKeterangan(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log("Hallo dari handleSubmit");
+    };
+
     return (
         <Col md={3} mt="2">
             <h4>
@@ -14,7 +47,10 @@ const Hasil = ({ shoppingCarts }) => {
                 <ListGroup variant="flush">
                     {shoppingCarts &&
                         shoppingCarts.map((cart) => (
-                            <ListGroup.Item key={cart.id}>
+                            <ListGroup.Item
+                                key={cart.id}
+                                onClick={() => handleShow(cart)}
+                            >
                                 <Row>
                                     <Col>
                                         <h4>
@@ -41,6 +77,17 @@ const Hasil = ({ shoppingCarts }) => {
                                 </Row>
                             </ListGroup.Item>
                         ))}
+                    <ModalKeranjang
+                        showModal={showModal}
+                        handleClose={handleClose}
+                        detailCart={detailCart}
+                        keterangan={keterangan}
+                        jumlah={jumlah}
+                        tambah={tambah}
+                        kurang={kurang}
+                        changeHandler={changeHandler}
+                        handleSubmit={handleSubmit}
+                    />
                 </ListGroup>
             )}
             <TotalBayar shoppingCarts={shoppingCarts} />
