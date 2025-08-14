@@ -20,6 +20,10 @@ const Home = () => {
                 console.log(error);
             });
 
+        getListKeranjang();
+    });
+
+    const getListKeranjang = () => {
         axios
             .get(`${API_URL}/keranjangs`)
             .then((response) => {
@@ -28,7 +32,7 @@ const Home = () => {
             .catch((error) => {
                 console.log(error);
             });
-    });
+    };
 
     const changeCategory = (value) => {
         setSelectCategory(value);
@@ -57,6 +61,7 @@ const Home = () => {
                     axios
                         .post(`${API_URL}/keranjangs`, cart)
                         .then((response) => {
+                            getListKeranjang();
                             Swal.fire({
                                 title: "Success !",
                                 text: `success add to cart ${cart.product.nama}`,
