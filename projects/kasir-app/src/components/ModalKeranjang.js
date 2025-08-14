@@ -18,7 +18,9 @@ const ModalKeranjang = ({
     tambah,
     kurang,
     changeHandler,
-    handleSubmit
+    handleSubmit,
+    totalHarga,
+    hapusPesanan
 }) => {
     if (detailCart) {
         return (
@@ -40,8 +42,7 @@ const ModalKeranjang = ({
                                 type="number"
                                 readOnly
                                 placeholder={
-                                    "Rp " +
-                                    numberWithCommas(detailCart.total_harga)
+                                    "Rp " + numberWithCommas(totalHarga)
                                 }
                                 style={{
                                     fontWeight: "bold",
@@ -99,6 +100,7 @@ const ModalKeranjang = ({
                                 alignItems: "center",
                                 gap: "5px"
                             }}
+                            onClick={() => hapusPesanan(detailCart.id)}
                         >
                             <FontAwesomeIcon icon={faTrash} />
                             Hapus pesanan
