@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Simple Component</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            .card {
+                padding: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                margin: 5px;
+                display: inline-flex;
+                flex-direction: column;
+                gap: 3px;
+                border-radius: 5px;
+                font-size: 15px;
+            }
+        </style>
+        <script
+            crossorigin
+            src="https://unpkg.com/react@18/umd/react.production.min.js"
+        ></script>
+        <script
+            crossorigin
+            src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+        ></script>
+    </head>
+    <body>
+        <div id="root"></div>
+
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script type="text/babel">
+            const container = document.getElementById("root");
+            const root = ReactDOM.createRoot(container);
+
+            const App = () => {
+                return (
+                    <>
+                        <Card name="Rudi Syahrudi" job="Front End Dev" />
+                        <Card name="Muhammad Rizky" job="Back End Dev" />
+                        <Card name="Andi" job="Fullstack Dev" />
+                    </>
+                );
+            };
+
+            const Card = ({ name, job }) => {
+                return (
+                    <>
+                        <div class="card">
+                            <h3>{name}</h3>
+                            <p>{job}</p>
+                        </div>
+                        ;
+                    </>
+                );
+            };
+
+            root.render(<App />);
+        </script>
+    </body>
+</html>
