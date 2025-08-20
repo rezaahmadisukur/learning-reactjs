@@ -27,7 +27,16 @@ class Counter extends Component {
     render() {
         return (
             <div className="flex gap-5 justify-center my-5">
-                <button className="bg-black text-white px-5 py-1">-</button>
+                <button
+                    onClick={() => {
+                        this.setState({
+                            count: this.state.count - 1
+                        });
+                    }}
+                    className="bg-black text-white px-5 py-1"
+                >
+                    -
+                </button>
                 <h1>{this.state.count}</h1>
                 <button
                     onClick={() =>
