@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "../components/Elements/Button";
 import CardProduct from "../components/Fragments/CardProduct";
 import Counter from "../components/Fragments/Counter";
@@ -48,6 +48,8 @@ const ProductPage = () => {
         setCart(JSON.parse(localStorage.getItem("cart")) || []);
     }, []);
 
+    console.log(cart);
+
     useEffect(() => {
         if (cart.length > 0) {
             const sum = cart.reduce((acc, item) => {
@@ -73,6 +75,23 @@ const ProductPage = () => {
         }
     };
 
+    //useRef
+    const cartRef = useRef(JSON.parse(localStorage.getItem("cart")) || []);
+
+    const handleAddToCartRef = (id) => {
+        cartRef.current = [...cartRef.current, { id: id, qty: 1 }];
+        localStorage.setItem("cart", JSON.stringify(cartRef.current));
+    };
+
+    const totalPriceRef = useRef(null);
+
+    useEffect(() => {
+        if (cart.length > 0) {
+            totalPriceRef.current.style.display = "table-row";
+        } else {
+            totalPriceRef.current.style.display = "none";
+        }
+    }, [cart]);
     return (
         <>
             <div className="flex justify-end gap-4 h-20 bg-blue-600 text-white items-center px-10">
@@ -144,7 +163,7 @@ const ProductPage = () => {
                                     </tr>
                                 );
                             })}
-                            <tr>
+                            <tr ref={totalPriceRef}>
                                 <td colSpan={3}>Price</td>
                                 <td>
                                     {totalPrice.toLocaleString("id-ID", {
