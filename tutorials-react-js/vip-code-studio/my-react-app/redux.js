@@ -15,7 +15,7 @@ const cartReducer = (state = { cart: [{ id: 1, qty: 20 }] }, action) => {
 
 // store
 const store = legacy_createStore(cartReducer);
-console.log("oncreate store: : ", store.getState());
+console.log("on create store: : ", store.getState());
 
 // subscribe
 store.subscribe(() => {
