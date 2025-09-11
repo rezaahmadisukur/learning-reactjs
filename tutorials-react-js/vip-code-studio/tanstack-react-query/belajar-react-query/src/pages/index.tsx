@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import { useState } from "react";
 
 interface Product {
   id: string;
@@ -9,13 +10,33 @@ interface Product {
 }
 
 export default function Home() {
+  const [showProduct, setShowProduct] = useState<string | null>(null);
+
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["product"],
+    queryKey: ["products"],
     queryFn: async () => {
       const res = await fetch("https://fakestoreapi.com/products");
       return res.json();
     }
   });
+
+  const {
+    data: detailProduct,
+    isLoading: isLoadingDetailProduct,
+    isError: isErrorDetailProduct,
+    error: errorDetailProducts
+  } = useQuery({
+    queryKey: ["product", showProduct],
+    queryFn: async () => {
+      const res = await fetch(
+        `https://fakestoreapi.com/products/${showProduct}`
+      );
+      return res.json();
+    },
+    enabled: showProduct !== null
+  });
+
+  console.log(detailProduct);
 
   // if (isLoading) {
   //   return (
@@ -53,6 +74,7 @@ export default function Home() {
             <div
               key={product.id}
               className="shadow p-4 flex flex-col items-center"
+              onClick={() => setShowProduct(product.id)}
             >
               <Image
                 width={100}
@@ -69,6 +91,32 @@ export default function Home() {
           ))}
         </div>
       )}
+      <div
+        className={`fixed h-screen w-screen bg-black/50 top-0 left-0 ${
+          showProduct ? "flex justify-center items-center" : "hidden"
+        }`}
+      >
+        <div className="w-1/2 h-1/2 bg-white relative flex items-center gap-8 p-8">
+          <button
+            className="absolute top-5 right-5 cursor-pointer"
+            onClick={() => setShowProduct(null)}
+          >
+            X
+          </button>
+          <Image
+            width={200}
+            height={200}
+            src={detailProduct?.image}
+            alt={detailProduct?.title}
+            className="w-1/4"
+          />
+          <div>
+            <h1 className="text-3xl">{detailProduct?.title}</h1>
+            <p className="text-xl font-light">{detailProduct?.description}</p>
+            <p className="font-light">$ {detailProduct?.price}</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
