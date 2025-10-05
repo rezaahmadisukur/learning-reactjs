@@ -1,9 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getTopAnime } from "../../../services/api";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
 import { Link } from "react-router-dom";
 
 const HomeContent = () => {
   const [items, setItems] = useState([]);
+  const swiperRef = useRef(null);
 
   useEffect(() => {
     getTopAnime((data) => {
@@ -35,14 +43,31 @@ const HomeContent = () => {
         <div className="py-5">
           <div className="py-5 flex justify-between items-center">
             <h1>Top Anime</h1>
-            <Link className="hover:text-my-pink transition-all hover:underline text-sm">
-              See More
-            </Link>
+            <div className="text-md flex gap-5">
+              <button
+                onClick={() => swiperRef.current?.slidePrev()}
+                className="w-8 h-8 rounded-full bg-my-gray font-bold grid place-content-center cursor-pointer hover:bg-slate-900"
+              >
+                <CaretLeft color="white" weight="bold" />
+              </button>
+              <button
+                onClick={() => swiperRef.current?.slideNext()}
+                className="w-8 h-8 rounded-full bg-my-gray font-bold grid place-content-center cursor-pointer hover:bg-slate-900"
+              >
+                <CaretRight color="white" weight="bold" />
+              </button>
+            </div>
           </div>
-          <div className="grid lg:grid-cols-5 gap-3 grid-cols-3">
+          <Swiper
+            modules={[Navigation]}
+            spaceBetween={10}
+            slidesPerView={5}
+            onSwiper={(swiper) => (swiperRef.current = swiper)}
+            // className="grid lg:grid-cols-5 gap-3 grid-cols-3"
+          >
             {items.length > 0 &&
               items.map((item) => (
-                <div
+                <SwiperSlide
                   key={item.mal_id}
                   className="h-100 bg-my-secondary rounded overflow-hidden"
                 >
@@ -69,15 +94,17 @@ const HomeContent = () => {
                     </div>
                   </div>
                   <div className="px-3 py-1 flex flex-col justify-between h-20">
-                    <h1 className="text-sm">{item.title}</h1>
+                    <Link className="text-sm line-clamp-1 hover:text-my-pink hover:underline transition-all">
+                      {item.title}
+                    </Link>
                     <p className="text-xs">
                       {item.type} | {item.genres[0].name} |{" "}
                       {`${item.duration.substring(0, 2)}m`}
                     </p>
                   </div>
-                </div>
+                </SwiperSlide>
               ))}
-          </div>
+          </Swiper>
         </div>
       </div>
     </div>
