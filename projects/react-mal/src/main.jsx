@@ -2,7 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { HomePage, TopAnime } from "./pages/index.js";
+import { DetailPage, ExplorePage, HomePage } from "./pages/index.js";
+import ContextProvider from "./contexts/Context";
 
 const router = createBrowserRouter([
   {
@@ -10,13 +11,19 @@ const router = createBrowserRouter([
     element: <HomePage />
   },
   {
-    path: "/top-anime",
-    element: <TopAnime />
+    path: "/explore",
+    element: <ExplorePage />
+  },
+  {
+    path: "/anime/:id/full",
+    element: <DetailPage />
   }
 ]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ContextProvider>
+      <RouterProvider router={router} />
+    </ContextProvider>
   </StrictMode>
 );

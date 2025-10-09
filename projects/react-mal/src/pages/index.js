@@ -1,4 +1,5 @@
 import HomePage from "./Home";
-import TopAnime from "./TopAnime";
+import ExplorePage from "./Explore";
+import DetailPage from "./Detail";
 
-export { HomePage, TopAnime };
+export { HomePage, ExplorePage, DetailPage };
