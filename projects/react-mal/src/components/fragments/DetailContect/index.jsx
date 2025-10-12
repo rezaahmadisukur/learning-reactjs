@@ -27,20 +27,57 @@ const DetailContent = () => {
               alt="..."
               className="rounded"
             />
-
-            <div className="flex flex-col justify-between py-5">
+            <div className="flex flex-col gap-5">
               <div>
                 <p className="font-bold text-my-white text-4xl">
                   {detailAnime.title} ({detailAnime.year})
                 </p>
-                <p className="text-2xl font-semibold my-5">Synopsis</p>
-                <p className="text-justify text-sm">{detailAnime.synopsis}</p>
+              </div>
+              <div className="flex items-center gap-5">
+                <div className="flex flex-col items-center gap-5">
+                  <p className="uppercase px-3 py-1 rounded bg-my-pink text-my-white text-xs">
+                    score
+                  </p>
+                  <p>{detailAnime.score}</p>
+                </div>
+                <div className="flex flex-col gap-5 ite">
+                  <div className="flex items-center gap-5">
+                    <p className="text-slate-200 font-light text-lg">
+                      Ranked{" "}
+                      <span className="font-semibold text-slate-100">
+                        #{detailAnime.rank}
+                      </span>
+                    </p>
+                    <p className="text-slate-200 font-light text-lg">
+                      Popularity{" "}
+                      <span className="font-semibold text-slate-100">
+                        #{detailAnime.popularity}
+                      </span>
+                    </p>
+                    <p className="text-slate-200 font-light text-lg">
+                      Members{" "}
+                      <span className="font-semibold text-slate-100">
+                        {detailAnime.members.toLocaleString()}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex gap-10 items-center">
+                    <Link className="text-blue-400 text-xs hover:text-my-pink hover:underline transition-all duration-500 capitalize">
+                      {detailAnime.season} {detailAnime.year}
+                    </Link>
+                    <Link className="text-blue-400 text-xs hover:text-my-pink hover:underline transition-all duration-500 capitalize">
+                      {detailAnime.type}
+                    </Link>
+                    <Link className="text-blue-400 text-xs hover:text-my-pink hover:underline transition-all duration-500 capitalize">
+                      {detailAnime.studios.length !== 0 &&
+                        detailAnime.studios[0].name}
+                    </Link>
+                  </div>
+                </div>
               </div>
               <div>
-                <Link className="text-my-white bg-my-pink rounded px-5 py-2 flex w-fit items-center gap-2">
-                  Watch Trailer
-                  <PlayCircle size={24} />
-                </Link>
+                <p className="text-2xl font-semibold my-5">Synopsis</p>
+                <p className="text-justify text-sm">{detailAnime.synopsis}</p>
               </div>
             </div>
           </div>
@@ -156,7 +193,15 @@ const DetailContent = () => {
                 </div>
               </div>
             </div>
-            <div className="w-7/12">Trailer</div>
+            <div className="w-7/12">
+              <div>
+                <HeaderDetailInformation>Trailer</HeaderDetailInformation>
+                <p>{detailAnime.trailer.url}</p>
+                <video width="320" height="240" controls>
+                  <source src={detailAnime.trailer.url} type="video/mp4" />
+                </video>
+              </div>
+            </div>
           </div>
         </div>
       )}
