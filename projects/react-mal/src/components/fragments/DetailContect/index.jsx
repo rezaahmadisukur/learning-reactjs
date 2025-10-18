@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getAnimeFullById } from "../../../services/api";
-import { PlayCircle } from "@phosphor-icons/react";
+import { getAnimeFullById, getCharacterById } from "../../../services/api";
 import HeaderDetailInformation from "./HeaderDetailInformation";
 import DetailInformation from "./DetailInformation";
+import YoutubePlayer from "./YoutubePlayer";
 
 const DetailContent = () => {
   const { id } = useParams();
   const [detailAnime, setDetailAnime] = useState([]);
+  const [charAnime, setCharAnime] = useState([]);
 
   useEffect(() => {
     getAnimeFullById(id, (data) => {
+      console.log(data.data);
       setDetailAnime(data.data);
     });
-  }, [id, setDetailAnime]);
-
-  console.log(detailAnime);
+    getCharacterById(id, (data) => {
+      const limitedData = data.data.slice(0, 5);
+      setCharAnime(limitedData);
+      console.log(limitedData);
+    });
+  }, [id, setDetailAnime, setCharAnime]);
 
   return (
     <div className="px-10 py-5 bg-my-dark text-my-white h-full">
@@ -82,7 +87,7 @@ const DetailContent = () => {
             </div>
           </div>
 
-          <div className="py-10 flex">
+          <div className="py-10 flex gap-5">
             <div className="w-5/12 flex flex-col gap-5">
               <div>
                 <HeaderDetailInformation>
@@ -123,7 +128,10 @@ const DetailContent = () => {
                   </DetailInformation>
                   <DetailInformation title="Producers">
                     {detailAnime.producers.map((producer, index) => (
-                      <Link className="text-blue-400 hover:text-my-pink hover:underline transition-all duration-500">
+                      <Link
+                        key={index}
+                        className="text-blue-400 hover:text-my-pink hover:underline transition-all duration-500"
+                      >
                         {index !== detailAnime.producers.length - 1
                           ? `${producer.name}, `
                           : producer.name}
@@ -132,7 +140,10 @@ const DetailContent = () => {
                   </DetailInformation>
                   <DetailInformation title="Licensors">
                     {detailAnime.licensors.map((licensor, index) => (
-                      <Link className="text-blue-400 hover:text-my-pink hover:underline transition-all duration-500">
+                      <Link
+                        key={index}
+                        className="text-blue-400 hover:text-my-pink hover:underline transition-all duration-500"
+                      >
                         {index !== detailAnime.licensors.length - 1
                           ? `${licensor.name}, `
                           : licensor.name}
@@ -141,7 +152,10 @@ const DetailContent = () => {
                   </DetailInformation>
                   <DetailInformation title="Studios">
                     {detailAnime.studios.map((studio, index) => (
-                      <Link className="text-blue-400 hover:text-my-pink hover:underline transition-all duration-500">
+                      <Link
+                        key={index}
+                        className="text-blue-400 hover:text-my-pink hover:underline transition-all duration-500"
+                      >
                         {index !== detailAnime.studios.length - 1
                           ? `${studio.name}, `
                           : studio.name}
@@ -155,7 +169,10 @@ const DetailContent = () => {
                   </DetailInformation>
                   <DetailInformation title="Genres">
                     {detailAnime.genres.map((genre, index) => (
-                      <Link className="text-blue-400 hover:text-my-pink hover:underline transition-all duration-500">
+                      <Link
+                        key={index}
+                        className="text-blue-400 hover:text-my-pink hover:underline transition-all duration-500"
+                      >
                         {index !== detailAnime.genres.length - 1
                           ? `${genre.name}, `
                           : genre.name}
@@ -193,13 +210,62 @@ const DetailContent = () => {
                 </div>
               </div>
             </div>
-            <div className="w-7/12">
+            <div className="w-7/12 flex flex-col">
               <div>
                 <HeaderDetailInformation>Trailer</HeaderDetailInformation>
-                <p>{detailAnime.trailer.url}</p>
-                <video width="320" height="240" controls>
-                  <source src={detailAnime.trailer.url} type="video/mp4" />
-                </video>
+                <YoutubePlayer
+                  youtubeEmbed={detailAnime.trailer.embed_url}
+                  youtubeId={detailAnime.trailer.youtube_id}
+                />
+              </div>
+              <div>
+                <HeaderDetailInformation>
+                  Characters & Voice Actors
+                </HeaderDetailInformation>
+                <div className="my-5">
+                  {charAnime.length !== 0 &&
+                    charAnime.map((char, index) => (
+                      <table key={index} className="w-full">
+                        <tbody>
+                          <tr>
+                            <td className="flex justify-between border border-slate-400">
+                              <div className="flex gap-3">
+                                <div>
+                                  <img
+                                    src={char.character.images.webp.image_url}
+                                    alt={char.character.images.jpg.image_url}
+                                    className="object-contain w-15"
+                                  />
+                                </div>
+                                <p className="text-sm">{char.character.name}</p>
+                              </div>
+                              <div className="flex gap-3">
+                                <p className="text-sm">
+                                  {char.voice_actors.length > 0
+                                    ? char.voice_actors[0].person.name
+                                    : "undifined"}
+                                </p>
+                                <img
+                                  src={
+                                    char.voice_actors.length > 0
+                                      ? char.voice_actors[0].person.images.jpg
+                                          .image_url
+                                      : "/public/assets/images/questionmark_23.gif"
+                                  }
+                                  alt={
+                                    char.voice_actors.length > 0
+                                      ? char.voice_actors[0].person.name
+                                      : "undifined"
+                                  }
+                                  className="object-contain w-15"
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    ))}
+                </div>
               </div>
             </div>
           </div>

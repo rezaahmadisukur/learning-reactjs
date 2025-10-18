@@ -44,3 +44,14 @@ export const getAnimeFullById = (id, callback) => {
       console.log(err);
     });
 };
+
+export const getCharacterById = (id, callback) => {
+  axios
+    .get(`${api_url}/anime/${id}/characters`)
+    .then((res) => {
+      callback(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
