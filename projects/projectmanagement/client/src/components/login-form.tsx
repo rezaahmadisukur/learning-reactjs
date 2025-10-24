@@ -19,10 +19,11 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { useState } from "react";
-import Loading from "./loading";
+import Loading from "./Loading";
 import delay from "@/lib/delay";
 import { toast } from "sonner";
 import { Link } from "react-router";
+import apiClient from "@/config/axios";
 
 const fromSchema = z.object({
   email: z.string().email().min(1, {
@@ -34,6 +35,7 @@ const fromSchema = z.object({
 });
 
 export function LoginForm({ className }: React.ComponentProps<"form">) {
+  // const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm({
@@ -46,14 +48,20 @@ export function LoginForm({ className }: React.ComponentProps<"form">) {
 
   const handleLogin = async (values: z.infer<typeof fromSchema>) => {
     try {
-      await delay(1000);
-      toast("Login Success", {
+      await delay(500);
+      // hit api login
+      const { data } = await apiClient.post("/auth/login", values);
+      toast(data.message, {
         onAutoClose: () => {
           setLoading(false);
+          // redirect
+          // navigate("");
         }
       });
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       console.log(error);
+      toast(error?.response.data.message);
     }
     setLoading(true);
     console.log(values);
@@ -78,7 +86,7 @@ export function LoginForm({ className }: React.ComponentProps<"form">) {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Email"
+                      placeholder="johndoe@emai.com"
                       {...field}
                       autoComplete="off"
                       autoFocus
@@ -97,7 +105,7 @@ export function LoginForm({ className }: React.ComponentProps<"form">) {
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="Password"
+                      placeholder="********"
                       {...field}
                       autoComplete="off"
                     />
