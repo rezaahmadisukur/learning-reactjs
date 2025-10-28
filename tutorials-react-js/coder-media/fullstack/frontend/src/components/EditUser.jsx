@@ -9,7 +9,6 @@ const EditUser = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getUserById = async () => {
     const response = await axios.get(`http://localhost:3000/users/${id}`);
     setName(response.data.name);
