@@ -22,7 +22,7 @@ import { useState } from "react";
 import Loading from "./Loading";
 import delay from "@/lib/delay";
 import { toast } from "sonner";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import apiClient from "@/config/axios";
 
 const fromSchema = z.object({
@@ -35,7 +35,7 @@ const fromSchema = z.object({
 });
 
 export function LoginForm({ className }: React.ComponentProps<"form">) {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm({
@@ -55,7 +55,7 @@ export function LoginForm({ className }: React.ComponentProps<"form">) {
         onAutoClose: () => {
           setLoading(false);
           // redirect
-          // navigate("");
+          navigate("/dashboard");
         }
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

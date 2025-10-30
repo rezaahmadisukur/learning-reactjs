@@ -16,7 +16,6 @@ const HomeContent = () => {
 
   useEffect(() => {
     document.title = "Homepage MAL";
-
     getTopAnime((data) => {
       setTopAnimeItems(data.data);
       // console.log("Top Anime", data.data);

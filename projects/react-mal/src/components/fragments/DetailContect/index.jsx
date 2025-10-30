@@ -219,9 +219,17 @@ const DetailContent = () => {
                 />
               </div>
               <div>
-                <HeaderDetailInformation>
-                  Characters & Voice Actors
-                </HeaderDetailInformation>
+                <div className="flex justify-between items-center">
+                  <HeaderDetailInformation>
+                    Characters & Voice Actors
+                  </HeaderDetailInformation>
+                  <Link
+                    to="/"
+                    className="text-blue-500 hover:underline transition-all text-xs duration-500"
+                  >
+                    See More
+                  </Link>
+                </div>
                 <div className="my-5">
                   {charAnime.length !== 0 &&
                     charAnime.map((char, index) => (
