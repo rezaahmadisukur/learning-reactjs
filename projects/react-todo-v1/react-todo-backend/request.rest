@@ -1,0 +1,13 @@
+GET http://127.0.0.1:3000/todos
+
+###
+GET http://127.0.0.1:3000/todos/69068ed9caee2fd1e93d5332
+
+###
+POST http://127.0.0.1:3000/todos
+Content-Type: application/json
+
+{
+  "task" : "Play Valo",
+  "completed" : true
+}
