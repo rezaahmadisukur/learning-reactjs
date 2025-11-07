@@ -1,35 +1,236 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+  Check,
+  Circle,
+  CircleCheck,
+  ListChecks,
+  Pencil,
+  Plus,
+  Trash2,
+  X
+} from "lucide-react";
+import CardHeader from "./components/CardHeader";
+import Header from "./components/Header";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface TodoTypes {
+  _id: string;
+  task: string;
+  completed: boolean;
 }
 
-export default App
+const App = () => {
+  const [todos, setTodos] = useState<[]>([]);
+  const [isShowFormAdd, setIsShowFormAdd] = useState<boolean>(false);
+  const [isShowFormEdit, setIsShowFormEdit] = useState<boolean>(false);
+  const [id, setId] = useState<string>("");
+  // const [editTask, setEditTask] = useState<string>("");
+  const db = import.meta.env.VITE_DB_URL;
+
+  const fetchTodo = async () => {
+    try {
+      const response = await axios.get(db);
+      setTodos(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTodo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleNewTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newTask = {
+      task: e.target.newTask.value,
+      completed: false
+    };
+    try {
+      await axios.post(db, newTask);
+      e.target.newTask.value = "";
+      setIsShowFormAdd(false);
+      await fetchTodo();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdateTask = async (e: React.FormEvent, task_id: string) => {
+    e.preventDefault();
+    const editTask = {
+      task: e.target.editTask.value
+    };
+    try {
+      await axios.put(`${db}/${task_id}`, editTask);
+      setIsShowFormEdit(false);
+      await fetchTodo();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteTask = async (task_id: string) => {
+    try {
+      await axios.delete(`${db}/${task_id}`);
+      await fetchTodo();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(todos.length);
+
+  return (
+    <div className="w-1/2 mx-auto my-10">
+      <Header />
+
+      {/* Card Task Completed */}
+      <div className="grid grid-cols-3 gap-5 my-10">
+        <CardHeader title="Total" count={todos.length}>
+          <ListChecks />
+        </CardHeader>
+        <CardHeader title="Active">
+          <Circle />
+        </CardHeader>
+        <CardHeader title="Done">
+          <CircleCheck />
+        </CardHeader>
+      </div>
+
+      {/* Bar Task */}
+      <div className="bg-white p-3 rounded-lg flex gap-3">
+        <button className="px-3 py-1 bg-primary text-white rounded-full cursor-pointer hover:opacity-90 transition-all duration-300">
+          All Task
+        </button>
+        <button className="px-3 py-1 bg-transparent text-primary rounded-full hover:text-zinc-900 hover:bg-zinc-200 transition-all duration-300 cursor-pointer">
+          Active
+        </button>
+        <button className="px-3 py-1 bg-transparent text-primary rounded-full hover:text-zinc-900 hover:bg-zinc-200 transition-all duration-300 cursor-pointer">
+          Complete
+        </button>
+      </div>
+
+      {/* Form Add Task */}
+      {isShowFormAdd ? (
+        <form
+          className="w-full bg-white my-5 p-5 rounded-lg"
+          onSubmit={handleNewTask}
+        >
+          <input
+            type="text"
+            name="newTask"
+            id="newTask"
+            placeholder="What needs to be done?"
+            autoComplete="off"
+            className="w-full border-2 border-primary rounded h-12 px-5 focus:border-primary placeholder:text-sm text-sm"
+          />
+          <div className="flex w-full gap-5 mt-3">
+            <button
+              type="submit"
+              className="flex gap-3 bg-primary w-11/12 justify-center items-center py-2 rounded-lg text-white hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50"
+            >
+              <Plus className="w-4 h-4" />
+              Add Task
+            </button>
+            <button
+              type="button"
+              className="w-1/12 border border-slate-300 flex justify-center items-center rounded-lg cursor-pointer hover:bg-slate-300 transition-all duration-300"
+              onClick={() => setIsShowFormAdd(false)}
+            >
+              <X className="w-4" />
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button
+          className="bg-primary text-white w-full my-10 py-3 rounded-lg flex justify-center items-center gap-5 hover:opacity-90 cursor-pointer transition-all duration-300"
+          onClick={() => setIsShowFormAdd(true)}
+        >
+          <Plus className="w-4 h-4" />
+          Add New Task
+        </button>
+      )}
+
+      {/* Task Todo */}
+      <div className="flex flex-col gap-5">
+        {todos.length > 0 &&
+          todos.map((todo: TodoTypes) => (
+            <div
+              key={todo._id}
+              className="bg-white p-4 rounded-lg hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300 flex justify-between items-center overflow-hidden group"
+            >
+              {isShowFormEdit && id == todo._id ? (
+                <form
+                  // action=""
+                  className="flex items-center justify-between w-full gap-2"
+                  onSubmit={(e) => handleUpdateTask(e, todo._id)}
+                >
+                  <input
+                    type="text"
+                    name="editTask"
+                    defaultValue={todo.task}
+                    // onChange={(e) => setEditTask(e.target.value)}
+                    className="border-2 w-full border-primary px-5 py-2 rounded-md"
+                  />
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="submit"
+                      className="cursor-pointer py-2 px-3 rounded bg-primary hover:bg-primary/90 transition-all duration-300"
+                    >
+                      <Check className="size-6 text-white" />
+                    </button>
+                    <button
+                      onClick={() => setIsShowFormEdit(false)}
+                      className="cursor-pointer py-2 px-3 rounded border border-slate-300 hover:bg-slate-300 transition-all duration-300"
+                    >
+                      <X className="size-6" />
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="flex justify-between w-full">
+                  <label
+                    htmlFor={`checkbox-${todo._id}`}
+                    className="flex items-center gap-3 text-lg text-slate-700 w-full"
+                  >
+                    <div className="w-fit h-fit flex items-center relative">
+                      <input
+                        type="checkbox"
+                        // checked={todo.completed}
+                        id={`checkbox-${todo._id}`}
+                        name={`checkbox-${todo._id}`}
+                        className="w-6 h-6 appearance-none checked:bg-primary border-2 border-primary rounded peer"
+                      />
+                      <Check className="absolute text-white" />
+                    </div>
+                    {todo.task}
+                  </label>
+                  <span className="flex gap-1 translate-y-20 group-hover:translate-y-0 transition-all duration-500">
+                    <button className="p-1 rounded hover:bg-primary/20 transition-all duration-500">
+                      <Pencil
+                        className="size-5 cursor-pointer text-primary"
+                        onClick={() => {
+                          setId(todo._id);
+                          setIsShowFormEdit(true);
+                        }}
+                      />
+                    </button>
+                    <button className="p-1 rounded hover:bg-red-600/20 transition-all duration-500">
+                      <Trash2
+                        className="size-5 cursor-pointer text-red-600"
+                        onClick={() => handleDeleteTask(todo._id)}
+                      />
+                    </button>
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+};
+
+export default App;
