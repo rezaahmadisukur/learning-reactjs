@@ -21,6 +21,7 @@ interface TodoTypes {
 
 const App = () => {
   const [todos, setTodos] = useState<[]>([]);
+  const [filtered, setFiltered] = useState<[]>([]);
   const [isShowFormAdd, setIsShowFormAdd] = useState<boolean>(false);
   const [isShowFormEdit, setIsShowFormEdit] = useState<boolean>(false);
   const [id, setId] = useState<string>("");
@@ -71,6 +72,19 @@ const App = () => {
     }
   };
 
+  const handleChecked = async (e: React.FormEvent, task_id: string) => {
+    e.preventDefault();
+    const editTask = {
+      completed: e.target.checked
+    };
+    try {
+      await axios.put(`${db}/${task_id}`, editTask);
+      await fetchTodo();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleDeleteTask = async (task_id: string) => {
     try {
       await axios.delete(`${db}/${task_id}`);
@@ -80,7 +94,20 @@ const App = () => {
     }
   };
 
-  console.log(todos.length);
+  const handleFilter = (e: React.FormEvent) => {
+    const target = e.target.value;
+    const filter = todos.filter((todo) => {
+      if (target === "completed") {
+        return !todo.completed;
+      } else if (target === "uncompleted") {
+        return todo.completed;
+      } else {
+        return todos;
+      }
+    });
+
+    setFiltered(filter);
+  };
 
   return (
     <div className="w-1/2 mx-auto my-10">
@@ -91,23 +118,41 @@ const App = () => {
         <CardHeader title="Total" count={todos.length}>
           <ListChecks />
         </CardHeader>
-        <CardHeader title="Active">
+        <CardHeader
+          title="Active"
+          count={todos?.filter((todo) => !todo.completed).length}
+        >
           <Circle />
         </CardHeader>
-        <CardHeader title="Done">
+        <CardHeader
+          title="Done"
+          count={todos?.filter((todo) => todo.completed).length}
+        >
           <CircleCheck />
         </CardHeader>
       </div>
 
       {/* Bar Task */}
       <div className="bg-white p-3 rounded-lg flex gap-3">
-        <button className="px-3 py-1 bg-primary text-white rounded-full cursor-pointer hover:opacity-90 transition-all duration-300">
+        <button
+          className="px-3 py-1 bg-primary text-white rounded-full cursor-pointer hover:opacity-90 transition-all duration-300"
+          value=""
+          onClick={(e) => handleFilter(e)}
+        >
           All Task
         </button>
-        <button className="px-3 py-1 bg-transparent text-primary rounded-full hover:text-zinc-900 hover:bg-zinc-200 transition-all duration-300 cursor-pointer">
+        <button
+          className="px-3 py-1 bg-transparent text-primary rounded-full hover:text-zinc-900 hover:bg-zinc-200 transition-all duration-300 cursor-pointer"
+          value="completed"
+          onClick={(e) => handleFilter(e)}
+        >
           Active
         </button>
-        <button className="px-3 py-1 bg-transparent text-primary rounded-full hover:text-zinc-900 hover:bg-zinc-200 transition-all duration-300 cursor-pointer">
+        <button
+          className="px-3 py-1 bg-transparent text-primary rounded-full hover:text-zinc-900 hover:bg-zinc-200 transition-all duration-300 cursor-pointer"
+          value="uncompleted"
+          onClick={(e) => handleFilter(e)}
+        >
           Complete
         </button>
       </div>
@@ -155,15 +200,14 @@ const App = () => {
 
       {/* Task Todo */}
       <div className="flex flex-col gap-5">
-        {todos.length > 0 &&
-          todos.map((todo: TodoTypes) => (
+        {filtered.length > 0 &&
+          filtered.map((todo: TodoTypes) => (
             <div
               key={todo._id}
               className="bg-white p-4 rounded-lg hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300 flex justify-between items-center overflow-hidden group"
             >
               {isShowFormEdit && id == todo._id ? (
                 <form
-                  // action=""
                   className="flex items-center justify-between w-full gap-2"
                   onSubmit={(e) => handleUpdateTask(e, todo._id)}
                 >
@@ -171,7 +215,6 @@ const App = () => {
                     type="text"
                     name="editTask"
                     defaultValue={todo.task}
-                    // onChange={(e) => setEditTask(e.target.value)}
                     className="border-2 w-full border-primary px-5 py-2 rounded-md"
                   />
                   <div className="flex items-center gap-1">
@@ -198,14 +241,21 @@ const App = () => {
                     <div className="w-fit h-fit flex items-center relative">
                       <input
                         type="checkbox"
-                        // checked={todo.completed}
+                        checked={todo.completed}
                         id={`checkbox-${todo._id}`}
                         name={`checkbox-${todo._id}`}
+                        onChange={(e) => handleChecked(e, todo._id)}
                         className="w-6 h-6 appearance-none checked:bg-primary border-2 border-primary rounded peer"
                       />
                       <Check className="absolute text-white" />
                     </div>
-                    {todo.task}
+                    <span
+                      className={`${
+                        todo.completed && "line-through text-slate-400"
+                      }`}
+                    >
+                      {todo.task}
+                    </span>
                   </label>
                   <span className="flex gap-1 translate-y-20 group-hover:translate-y-0 transition-all duration-500">
                     <button className="p-1 rounded hover:bg-primary/20 transition-all duration-500">
