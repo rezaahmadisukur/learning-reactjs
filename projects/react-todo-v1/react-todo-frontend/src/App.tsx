@@ -11,15 +11,12 @@ import {
 import CardHeader from "./components/CardHeader";
 import Header from "./components/Header";
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import ListCategory from "./components/ListCategory";
-import { Context } from "./contexts/Context";
-
-interface TodoTypes {
-  _id: string;
-  task: string;
-  completed: boolean;
-}
+import { Context, type TodoTypes } from "./contexts/Context";
+import useStore from "./hooks/useStore";
+import useFetch from "./hooks/useFetch";
+import useUpdate from "./hooks/useUpdate";
+import useDestroy from "./hooks/useDestroy";
 
 const categories = [
   { id: "1", name: "all", label: "All Task" },
@@ -28,84 +25,27 @@ const categories = [
 ];
 
 const App = () => {
-  // const [todos, setTodos] = useState<TodoTypes[]>([]);
-  // const [filtered, setFiltered] = useState<TodoTypes[]>([]);
-  const { todos, filtered, setFiltered, setTodos } = useContext(Context);
-  const [isShowFormAdd, setIsShowFormAdd] = useState<boolean>(false);
-  const [isShowFormEdit, setIsShowFormEdit] = useState<boolean>(false);
+  const {
+    todos,
+    filtered,
+    isShowFormAdd,
+    isShowFormEdit,
+    setIsShowFormAdd,
+    setIsShowFormEdit
+  } = useContext(Context);
   const [id, setId] = useState<string>("");
-  const db = import.meta.env.VITE_DB_URL;
-
-  const fetchTodo = async () => {
-    try {
-      const response = await axios.get(db);
-      setTodos(response.data);
-      setFiltered(response.data.sort().reverse());
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { handleNewTask } = useStore();
+  const { fetchTodo } = useFetch();
+  const { handleUpdateTask, handleChecked } = useUpdate();
+  const { handleDeleteTask } = useDestroy();
 
   useEffect(() => {
     fetchTodo();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleNewTask = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const newTask = {
-      task: (e.target as HTMLFormElement).newTask.value,
-      completed: false
-    };
-    try {
-      await axios.post(db, newTask);
-      (e.target as HTMLFormElement).newTask.value = "";
-      setIsShowFormAdd(false);
-      await fetchTodo();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleUpdateTask = async (e: React.FormEvent, task_id: string) => {
-    e.preventDefault();
-    const editTask = {
-      task: (e.target as HTMLFormElement).editTask.value,
-      completed: (e.target as HTMLFormElement).checked
-    };
-    try {
-      await axios.put(`${db}/${task_id}`, editTask);
-      setIsShowFormEdit(false);
-      await fetchTodo();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleChecked = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    task_id: string
-  ) => {
-    e.preventDefault();
-    const editTask = {
-      completed: (e.target as HTMLInputElement).checked
-    };
-    try {
-      await axios.put(`${db}/${task_id}`, editTask);
-      await fetchTodo();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDeleteTask = async (task_id: string) => {
-    try {
-      await axios.delete(`${db}/${task_id}`);
-      await fetchTodo();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  console.log(filtered);
 
   return (
     <div className="w-1/2 mx-auto my-10">
