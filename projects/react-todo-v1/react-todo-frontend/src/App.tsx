@@ -10,8 +10,10 @@ import {
 } from "lucide-react";
 import CardHeader from "./components/CardHeader";
 import Header from "./components/Header";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
+import ListCategory from "./components/ListCategory";
+import { Context } from "./contexts/Context";
 
 interface TodoTypes {
   _id: string;
@@ -19,19 +21,26 @@ interface TodoTypes {
   completed: boolean;
 }
 
+const categories = [
+  { id: "1", name: "all", label: "All Task" },
+  { id: "2", name: "uncompleted", label: "Active" },
+  { id: "3", name: "completed", label: "Completed" }
+];
+
 const App = () => {
-  const [todos, setTodos] = useState<[]>([]);
-  const [filtered, setFiltered] = useState<[]>([]);
+  // const [todos, setTodos] = useState<TodoTypes[]>([]);
+  // const [filtered, setFiltered] = useState<TodoTypes[]>([]);
+  const { todos, filtered, setFiltered, setTodos } = useContext(Context);
   const [isShowFormAdd, setIsShowFormAdd] = useState<boolean>(false);
   const [isShowFormEdit, setIsShowFormEdit] = useState<boolean>(false);
   const [id, setId] = useState<string>("");
-  // const [editTask, setEditTask] = useState<string>("");
   const db = import.meta.env.VITE_DB_URL;
 
   const fetchTodo = async () => {
     try {
       const response = await axios.get(db);
       setTodos(response.data);
+      setFiltered(response.data.sort().reverse());
     } catch (error) {
       console.log(error);
     }
@@ -42,15 +51,15 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleNewTask = async (e: React.FormEvent) => {
+  const handleNewTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newTask = {
-      task: e.target.newTask.value,
+      task: (e.target as HTMLFormElement).newTask.value,
       completed: false
     };
     try {
       await axios.post(db, newTask);
-      e.target.newTask.value = "";
+      (e.target as HTMLFormElement).newTask.value = "";
       setIsShowFormAdd(false);
       await fetchTodo();
     } catch (error) {
@@ -61,7 +70,8 @@ const App = () => {
   const handleUpdateTask = async (e: React.FormEvent, task_id: string) => {
     e.preventDefault();
     const editTask = {
-      task: e.target.editTask.value
+      task: (e.target as HTMLFormElement).editTask.value,
+      completed: (e.target as HTMLFormElement).checked
     };
     try {
       await axios.put(`${db}/${task_id}`, editTask);
@@ -72,10 +82,13 @@ const App = () => {
     }
   };
 
-  const handleChecked = async (e: React.FormEvent, task_id: string) => {
+  const handleChecked = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    task_id: string
+  ) => {
     e.preventDefault();
     const editTask = {
-      completed: e.target.checked
+      completed: (e.target as HTMLInputElement).checked
     };
     try {
       await axios.put(`${db}/${task_id}`, editTask);
@@ -92,21 +105,6 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleFilter = (e: React.FormEvent) => {
-    const target = e.target.value;
-    const filter = todos.filter((todo) => {
-      if (target === "completed") {
-        return !todo.completed;
-      } else if (target === "uncompleted") {
-        return todo.completed;
-      } else {
-        return todos;
-      }
-    });
-
-    setFiltered(filter);
   };
 
   return (
@@ -134,27 +132,14 @@ const App = () => {
 
       {/* Bar Task */}
       <div className="bg-white p-3 rounded-lg flex gap-3">
-        <button
-          className="px-3 py-1 bg-primary text-white rounded-full cursor-pointer hover:opacity-90 transition-all duration-300"
-          value=""
-          onClick={(e) => handleFilter(e)}
-        >
-          All Task
-        </button>
-        <button
-          className="px-3 py-1 bg-transparent text-primary rounded-full hover:text-zinc-900 hover:bg-zinc-200 transition-all duration-300 cursor-pointer"
-          value="completed"
-          onClick={(e) => handleFilter(e)}
-        >
-          Active
-        </button>
-        <button
-          className="px-3 py-1 bg-transparent text-primary rounded-full hover:text-zinc-900 hover:bg-zinc-200 transition-all duration-300 cursor-pointer"
-          value="uncompleted"
-          onClick={(e) => handleFilter(e)}
-        >
-          Complete
-        </button>
+        {categories?.length > 0 &&
+          categories?.map((category) => (
+            <div key={category.id}>
+              <ListCategory value={category.name}>
+                {category.label}
+              </ListCategory>
+            </div>
+          ))}
       </div>
 
       {/* Form Add Task */}
