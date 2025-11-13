@@ -4,7 +4,9 @@ import jwt from "jsonwebtoken";
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await Users.findAll();
+    const users = await Users.findAll({
+      attributes: ["id", "name", "email"]
+    });
     res.json(users);
   } catch (error) {
     console.log(error);
@@ -38,6 +40,7 @@ export const login = async (req, res) => {
         email: req.body.email
       }
     });
+    console.log(user);
     const match = await bcrypt.compare(req.body.password, user[0].password);
     if (!match) return res.status(400).json({ msg: "Wrong Password" });
     const userId = user[0].id;
@@ -50,7 +53,7 @@ export const login = async (req, res) => {
     );
     const refreshToken = jwt.sign(
       { userId, name, email },
-      process.env.REFRESH_TOKEN_STIRNG,
+      process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "1d" }
     );
     await Users.update(
@@ -71,4 +74,26 @@ export const login = async (req, res) => {
       msg: "Email Not Found"
     });
   }
+};
+
+export const logout = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) return res.sendStatus(204);
+  const user = await Users.findAll({
+    where: {
+      refresh_token: refreshToken
+    }
+  });
+  if (!user[0]) return res.sendStatus(204);
+  const userId = user[0].id;
+  await Users.update(
+    { refresh_token: null },
+    {
+      where: {
+        id: userId
+      }
+    }
+  );
+  res.clearCookie("refreshToken");
+  return res.sendStatus(200);
 };
