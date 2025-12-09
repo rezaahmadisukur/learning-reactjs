@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "@testing-library/jest-dom";
 
 interface CommentBoxProps {
   onAddComment: (text: string) => void;
@@ -25,10 +26,12 @@ function CommentBox({ onAddComment }: CommentBoxProps) {
         onChange={(e) => setText(e.target.value)}
         placeholder="Write a comment..."
         rows={4}
+        data-testid="comment-input"
         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none mb-4"
       />
       <button
         type="submit"
+        data-testid="btn-comment-form"
         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         Add Comment
