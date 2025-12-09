@@ -27,25 +27,39 @@ const categories = [
 const App = () => {
   const {
     todos,
-    filtered,
+    target,
+    setActive,
     isShowFormAdd,
     isShowFormEdit,
     setIsShowFormAdd,
-    setIsShowFormEdit
+    setIsShowFormEdit,
+    showFormAddError
   } = useContext(Context);
   const [id, setId] = useState<string>("");
   const { handleNewTask } = useStore();
   const { fetchTodo } = useFetch();
   const { handleUpdateTask, handleChecked } = useUpdate();
   const { handleDeleteTask } = useDestroy();
+  const [filteredData, setFilteredData] = useState<TodoTypes[]>([]);
 
   useEffect(() => {
+    const filterData = todos.filter((todo: TodoTypes) => {
+      switch (target) {
+        case "uncompleted":
+          setActive(target);
+          return !todo.completed;
+        case "completed":
+          setActive(target);
+          return todo.completed;
+        default:
+          setActive(target);
+          return todos;
+      }
+    });
+
+    setFilteredData(filterData);
     fetchTodo();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  console.log(filtered);
+  }, [fetchTodo, todos, target, setActive]);
 
   return (
     <div className="w-1/2 mx-auto my-10">
@@ -96,7 +110,12 @@ const App = () => {
             autoComplete="off"
             className="w-full border-2 border-primary rounded h-12 px-5 focus:border-primary placeholder:text-sm text-sm"
           />
-          <div className="flex w-full gap-5 mt-3">
+          {showFormAddError && (
+            <p className="text-xs text-red-500 m-2 italic">
+              Input form must be required
+            </p>
+          )}
+          <div className="flex w-full gap-5 my-3">
             <button
               type="submit"
               className="flex gap-3 bg-primary w-11/12 justify-center items-center py-2 rounded-lg text-white hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50"
@@ -125,8 +144,8 @@ const App = () => {
 
       {/* Task Todo */}
       <div className="flex flex-col gap-5">
-        {filtered.length > 0 &&
-          filtered.map((todo: TodoTypes) => (
+        {filteredData.length > 0 &&
+          filteredData.map((todo: TodoTypes) => (
             <div
               key={todo._id}
               className="bg-white p-4 rounded-lg hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300 flex justify-between items-center overflow-hidden group"

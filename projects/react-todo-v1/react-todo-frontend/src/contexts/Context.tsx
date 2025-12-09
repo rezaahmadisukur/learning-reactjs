@@ -27,48 +27,55 @@ interface ChildrenTypes {
 interface ContextValueTypes {
   todos: TodoTypes[];
   setTodos: Dispatch<SetStateAction<TodoTypes[]>>;
-  filtered: TodoTypes[];
-  setFiltered: Dispatch<SetStateAction<TodoTypes[]>>;
   isShowFormAdd: boolean;
   setIsShowFormAdd: Dispatch<SetStateAction<boolean>>;
   active: string;
   setActive: Dispatch<SetStateAction<string>>;
   isShowFormEdit: boolean;
   setIsShowFormEdit: Dispatch<SetStateAction<boolean>>;
+  target: string;
+  setTarget: Dispatch<SetStateAction<string>>;
+  showFormAddError: boolean;
+  setShowFormAddError: Dispatch<SetStateAction<boolean>>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const Context = createContext<ContextValueTypes>({
-  setFiltered: () => {},
-  todos: [],
   setTodos: () => {},
-  filtered: [],
+  todos: [],
   setIsShowFormAdd: () => {},
   isShowFormAdd: false,
   setActive: () => {},
   active: "all",
   setIsShowFormEdit: () => {},
-  isShowFormEdit: false
+  isShowFormEdit: false,
+  setTarget: () => {},
+  target: "all",
+  setShowFormAddError: () => {},
+  showFormAddError: false
 });
 
 const ContextProvider = ({ children }: ChildrenTypes) => {
   const [todos, setTodos] = useState<TodoTypes[]>([]);
-  const [filtered, setFiltered] = useState<TodoTypes[]>([]);
   const [isShowFormAdd, setIsShowFormAdd] = useState<boolean>(false);
   const [isShowFormEdit, setIsShowFormEdit] = useState<boolean>(false);
+  const [showFormAddError, setShowFormAddError] = useState<boolean>(false);
+  const [target, setTarget] = useState<string>("all");
   const [active, setActive] = useState<string>("all");
 
   const ContextValue = {
     todos,
     setTodos,
-    filtered,
-    setFiltered,
     isShowFormAdd,
     setIsShowFormAdd,
     active,
     setActive,
     isShowFormEdit,
-    setIsShowFormEdit
+    setIsShowFormEdit,
+    target,
+    setTarget,
+    showFormAddError,
+    setShowFormAddError
   };
 
   return <Context.Provider value={ContextValue}>{children}</Context.Provider>;
