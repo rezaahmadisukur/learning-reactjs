@@ -1,0 +1,27 @@
+GET  http://127.0.0.1:3000/users
+
+###
+GET  http://127.0.0.1:3000/users/690085da00f3f80bd22b8797
+
+###
+POST http://127.0.0.1:3000/users
+Content-Type:  application/json
+
+{
+  "name" : "Dhea",
+  "email": "dhea@email.com",
+  "gender": "Female"
+}
+
+### 
+PATCH http://127.0.0.1:3000/users/690085da00f3f80bd22b8797
+Content-Type: application/json
+
+{
+  "name" : "Mikry",
+  "email": "mikry@email.com",
+  "gender": "Male"
+}
+
+###
+DELETE http://127.0.0.1:3000/users/690085da00f3f80bd22b8797

@@ -1,0 +1,38 @@
+<div class="mt-5">
+  <h2>Daftar Mahasiswa</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (mahasiswa.length > 0) { %> <% mahasiswa.forEach((mhs,index) => { %>
+      <tr>
+        <td scope="row"><%= index + 1 %></td>
+        <td><%= mhs.name %></td>
+        <td><%= mhs.email %></td>
+        <td>
+          <button class="border-0 btn btn-success badge rounded-pill fw-normal">
+            update
+          </button>
+          <button class="border-0 btn btn-danger badge rounded-pill fw-normal">
+            delete
+          </button>
+        </td>
+      </tr>
+      <% }) %> <% } else { %>
+      <tr>
+        <td colspan="4">
+          <div class="alert alert-danger text-center fw-bold" role="alert">
+            No Data
+          </div>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,26 @@
+GET http://127.0.0.1:3000/todos
+
+###
+GET http://127.0.0.1:3000/todos/69085060aac6d56a29026055
+
+###
+POST http://127.0.0.1:3000/todos
+Content-Type: application/json
+
+{
+  "task" : "Play Valo",
+  "completed" : true
+}
+
+###
+PUT http://127.0.0.1:3000/todos/69085060aac6d56a29026055
+Content-Type: application/json
+
+{
+  "task" : "Swimming",
+  "completed" : true
+}
+
+###
+DELETE http://127.0.0.1:3000/todos/690850faaac6d56a2902610e
+Content-Type: application/json
