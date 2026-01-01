@@ -13,6 +13,7 @@ import {
   Res,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { CreateHeroDto } from './dto/create-hero.dto';
 
 const heroes = [
   {
@@ -63,22 +64,18 @@ export class HeroController {
   @Post('store')
   store(
     @Req() request: Request,
+    @Body() createHeroDto: CreateHeroDto,
     @Res({ passthrough: true }) response: Response,
   ) {
     try {
-      const { id, nama, type, gambar } = request.body as {
-        id: number;
-        nama: string;
-        type: string;
-        gambar: string;
-      };
+      // const { id, nama, type, gambar } = request.body as {
+      //   id: number;
+      //   nama: string;
+      //   type: string;
+      //   gambar: string;
+      // };
 
-      heroes.push({
-        id,
-        nama,
-        type,
-        gambar,
-      });
+      heroes.push(createHeroDto);
 
       return response.status(201).json({
         message: 'Create successfully',
