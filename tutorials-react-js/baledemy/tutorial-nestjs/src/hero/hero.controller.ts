@@ -3,8 +3,10 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   Post,
+  Redirect,
   Req,
   Res,
 } from '@nestjs/common';
@@ -35,6 +37,7 @@ const heroes = [
 export class HeroController {
   @Get('index') // hero/index
   @HttpCode(200)
+  @Header('Content-Type', 'application/json')
   index(@Res() response: Response) {
     return response.json(heroes);
   }
@@ -50,24 +53,30 @@ export class HeroController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const { id, nama, type, gambar } = request.body as {
-      id: number;
-      nama: string;
-      type: string;
-      gambar: string;
-    };
+    try {
+      const { id, nama, type, gambar } = request.body as {
+        id: number;
+        nama: string;
+        type: string;
+        gambar: string;
+      };
 
-    heroes.push({
-      id,
-      nama,
-      type,
-      gambar,
-    });
+      heroes.push({
+        id,
+        nama,
+        type,
+        gambar,
+      });
 
-    return response.status(201).json({
-      message: 'Create successfully',
-      data: heroes,
-    });
+      return response.status(201).json({
+        message: 'Create successfully',
+        data: heroes,
+      });
+    } catch (error) {
+      response.status(500).json({
+        message: error as Error,
+      });
+    }
   }
 
   @Delete('destroy')
@@ -85,5 +94,11 @@ export class HeroController {
       message: 'Delete Successfully',
       data: deleted,
     });
+  }
+
+  @Get('welcome')
+  @Redirect('https://docs.nestjs.com/')
+  hello() {
+    return 'welcome';
   }
 }
