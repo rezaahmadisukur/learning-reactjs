@@ -1,13 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
 
-@Controller()
+@Controller('hero')
 export class HeroController {
-  @Get('hero/index')
+  @Get('index') // hero/index
   index(): string {
     return 'hero index';
   }
 
-  @Get('hero/create')
+  @Get('create') // hero/create
   create(): string {
     return 'hero create';
   }
