@@ -1,10 +1,12 @@
 import {
+  Bind,
   Body,
   Controller,
   Delete,
   Get,
   Header,
   HttpCode,
+  Param,
   Post,
   Redirect,
   Req,
@@ -40,6 +42,16 @@ export class HeroController {
   @Header('Content-Type', 'application/json')
   index(@Res() response: Response) {
     return response.json(heroes);
+  }
+
+  @Get('detail/:id')
+  @Bind(Param('id'))
+  show(id: string, @Res() response: Response) {
+    const hero = heroes.find((hero) => hero.id.toString() === id);
+    return response.json({
+      message: 'Detail Successfully',
+      data: hero,
+    });
   }
 
   @Get('create') // hero/create
