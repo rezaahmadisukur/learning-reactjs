@@ -12,7 +12,8 @@ export class HeroController {
   }
 
   @Get('create') // hero/create
-  create(): string {
+  create(@Res({ passthrough: true }) response: Response): string {
+    response.cookie('name', 'baledemia');
     return 'hero create';
   }
 }
