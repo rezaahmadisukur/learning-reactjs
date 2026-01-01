@@ -75,12 +75,13 @@ export class HeroController {
       //   gambar: string;
       // };
 
-      heroes.push(createHeroDto);
+      // heroes.push(createHeroDto);
 
-      return response.status(201).json({
-        message: 'Create successfully',
-        data: heroes,
-      });
+      // return response.status(201).json({
+      //   message: 'Create successfully',
+      //   data: heroes,
+      // });
+      return createHeroDto;
     } catch (error) {
       response.status(500).json({
         message: error as Error,
