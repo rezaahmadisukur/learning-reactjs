@@ -15,41 +15,23 @@ import {
 import type { Request, Response } from 'express';
 import { CreateHeroDto } from './dto/create-hero.dto';
 import { UpdateHeroDto } from './dto/update-hero.dto';
-
-const heroes = [
-  {
-    id: 1,
-    nama: 'Aurora',
-    type: 'Mage',
-    gambar: 'aurora.jpg',
-  },
-  {
-    id: 2,
-    nama: 'Zilong',
-    type: 'Fighter',
-    gambar: 'zilong.jpg',
-  },
-  {
-    id: 3,
-    nama: 'Akai',
-    type: 'Tank',
-    gambar: 'akai.jpg',
-  },
-];
+import { HeroService } from './hero.service';
 
 @Controller('hero')
 export class HeroController {
+  constructor(private heroService: HeroService) {}
+
   @Get('index') // hero/index
   @HttpCode(200)
   @Header('Content-Type', 'application/json')
   index(@Res() response: Response) {
-    return response.json(heroes);
+    return response.json(this.heroService.findAll());
   }
 
   @Get('detail/:id')
   @Bind(Param('id'))
   show(id: string, @Res() response: Response) {
-    const hero = heroes.find((hero) => hero.id.toString() === id);
+    const hero = this.heroService.findOne(id);
     return response.json({
       message: 'Detail Successfully',
       data: hero,
@@ -76,11 +58,11 @@ export class HeroController {
       //   gambar: string;
       // };
 
-      heroes.push(createHeroDto);
+      this.heroService.create(createHeroDto);
 
       return response.status(201).json({
         message: 'Create successfully',
-        data: heroes,
+        data: this.heroService.findAll(),
       });
     } catch (error) {
       response.status(500).json({
@@ -96,23 +78,23 @@ export class HeroController {
     @Body() updateHeroDto: UpdateHeroDto,
     @Res() response: Response,
   ) {
-    const find = heroes.find((hero) => hero.id.toString() === id);
+    const find = this.heroService.findOne(id);
 
     if (!find) {
       return response.status(404).json({
         message: `Not found ${find}`,
       });
-    } else {
-      find.id = updateHeroDto.id as unknown as number;
-      find.nama = updateHeroDto.nama as unknown as string;
-      find.type = updateHeroDto.type as unknown as string;
-      find.gambar = updateHeroDto.gambar as unknown as string;
-
-      return response.status(200).json({
-        message: 'Updated Successfully',
-        data: heroes,
-      });
     }
+
+    find.id = updateHeroDto.id as unknown as number;
+    find.nama = updateHeroDto.nama as unknown as string;
+    find.type = updateHeroDto.type as unknown as string;
+    find.gambar = updateHeroDto.gambar as unknown as string;
+
+    return response.status(200).json({
+      message: 'Updated Successfully',
+      data: this.heroService.findAll(),
+    });
   }
 
   @Delete('destroy/:id')
@@ -122,7 +104,7 @@ export class HeroController {
     //   id: number;
     // };
 
-    const deleted = heroes.filter((hero) => hero.id.toString() !== id);
+    const deleted = this.heroService.deleteOne(id);
 
     return response.status(200).json({
       message: 'Delete Successfully',
