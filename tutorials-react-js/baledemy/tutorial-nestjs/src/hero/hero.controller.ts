@@ -10,7 +10,6 @@ import {
   Post,
   Put,
   Redirect,
-  Req,
   Res,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
@@ -116,16 +115,14 @@ export class HeroController {
     }
   }
 
-  @Delete('destroy')
-  destroy(
-    @Req() request: Request,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const { id } = request.body as {
-      id: number;
-    };
+  @Delete('destroy/:id')
+  @Bind(Param('id'))
+  destroy(id: string, @Res({ passthrough: true }) response: Response) {
+    // const { id } = request.body as {
+    //   id: number;
+    // };
 
-    const deleted = heroes.filter((hero) => hero.id !== id);
+    const deleted = heroes.filter((hero) => hero.id.toString() !== id);
 
     return response.status(200).json({
       message: 'Delete Successfully',
