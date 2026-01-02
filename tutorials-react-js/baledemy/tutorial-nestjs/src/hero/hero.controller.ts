@@ -8,12 +8,14 @@ import {
   HttpCode,
   Param,
   Post,
+  Put,
   Redirect,
   Req,
   Res,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { CreateHeroDto } from './dto/create-hero.dto';
+import { UpdateHeroDto } from './dto/update-hero.dto';
 
 const heroes = [
   {
@@ -63,7 +65,7 @@ export class HeroController {
 
   @Post('store')
   store(
-    @Req() request: Request,
+    // @Req() request: Request,
     @Body() createHeroDto: CreateHeroDto,
     @Res({ passthrough: true }) response: Response,
   ) {
@@ -75,16 +77,41 @@ export class HeroController {
       //   gambar: string;
       // };
 
-      // heroes.push(createHeroDto);
+      heroes.push(createHeroDto);
 
-      // return response.status(201).json({
-      //   message: 'Create successfully',
-      //   data: heroes,
-      // });
-      return createHeroDto;
+      return response.status(201).json({
+        message: 'Create successfully',
+        data: heroes,
+      });
     } catch (error) {
       response.status(500).json({
         message: error as Error,
+      });
+    }
+  }
+
+  @Put('update/:id')
+  @Bind(Param('id'))
+  update(
+    id: string,
+    @Body() updateHeroDto: UpdateHeroDto,
+    @Res() response: Response,
+  ) {
+    const find = heroes.find((hero) => hero.id.toString() === id);
+
+    if (!find) {
+      return response.status(404).json({
+        message: `Not found ${find}`,
+      });
+    } else {
+      find.id = updateHeroDto.id as unknown as number;
+      find.nama = updateHeroDto.nama as unknown as string;
+      find.type = updateHeroDto.type as unknown as string;
+      find.gambar = updateHeroDto.gambar as unknown as string;
+
+      return response.status(200).json({
+        message: 'Updated Successfully',
+        data: heroes,
       });
     }
   }
