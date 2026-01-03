@@ -6,6 +6,7 @@ import { RoleController } from './role/role.controller';
 import { HeroModule } from './hero/hero.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    AuthModule,
   ],
   controllers: [AppController, RoleController],
   providers: [AppService],
