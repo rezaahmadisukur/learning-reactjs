@@ -18,6 +18,7 @@ export class UserService {
 
     // const { password, ...user } = newUser; // bisa kayak gini atau
     const { name, email, active, createdAt, updatedAt } = newUser;
+
     const user = {
       name: name,
       email: email,
@@ -35,6 +36,21 @@ export class UserService {
 
   findAll() {
     return `This action returns all user`;
+  }
+
+  async findByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    // Bisa pake handle error nya pake ini diservice atau di controller
+    // if (!user) {
+    //   throw new ConcflictException('user already exists');
+    // }
+
+    return user;
   }
 
   async findById(id: number) {

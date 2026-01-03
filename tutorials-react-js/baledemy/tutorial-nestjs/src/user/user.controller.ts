@@ -18,7 +18,21 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @Res() response: Response,
+  ) {
+    const userEmailExist = await this.userService.findByEmail(
+      createUserDto.email,
+    );
+
+    if (userEmailExist) {
+      return response.status(409).json({
+        status: 409,
+        message: 'User Already Exists',
+      });
+    }
+
     return this.userService.register(createUserDto);
   }
 
