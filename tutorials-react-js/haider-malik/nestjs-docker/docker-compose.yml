@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - '3000:3000'
+      # - '5556:5555'
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://postgres@root/db:5432/nest-dock
+      - NODE_ENV=development
+    depends_on:
+      - db
+    command: npm run start:dev
+    restart: unless-stopped
+
+  db:
+    image: postgres:17.6
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=nest-dock
+
+  prsima-studio:
+    image: node:24-alpine3.21
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - '5555:5555'
+    environment:
+      - DATABASE_URL=postgresql://postgres@root/db:5432/nest-dock
+    depends_on:
+      - db
+    command: npx prisma studio
+
+volumes:
+  postgres_data:
